@@ -22,12 +22,47 @@ let addTask = function (e) {
 
   let listItem = createTask(newTask.value);
   todoUI.appendChild(listItem);
-
   newTask.value = "";
 
-  bindCompleteItems(listItem, checkboxClick);
+  bindInCompleteItems(listItem, completeTask);
 };
 
-let bindCompleteItems = function (taskItem, checkboxClick) {
-  let checkBox = taskItem.querySelector('input[type="checkbox"]');
+let completeTask = function () {
+  let listItem = this.parentNode;
+  let deleteBtn = document.createElement("button");
+  deleteBtn.innerText = "Delete";
+  deleteBtn.className = "delete";
+  listItem.appendChild(deleteBtn);
+
+  let checkbox = listItem.querySelector('input[type="checkbox"]');
+  checkbox.remove();
+  completeUI.appendChild(listItem);
+
+  bindCompleteItems(listItem, deleteTask);
 };
+
+let deleteTask = function () {
+  let listItem = this.parentNode;
+  let ul = listItem.parentNode;
+  ul.removeChild(listItem);
+};
+
+let bindCompleteItems = function (deleteItem, deleteTask) {
+  let deleteBtn = deleteItem.querySelector(".delete");
+  deleteBtn.onclick = deleteTask;
+};
+
+let bindInCompleteItems = function (taskItem, completeTask) {
+  let checkBox = taskItem.querySelector('input[type="checkbox"]');
+  checkBox.onchange = completeTask;
+};
+
+for (let i = 0; i < todoUI.children.length; i++) {
+  bindInCompleteItems(todoUI.children[i], completeTask);
+}
+
+for (let i = 0; i < completeUI.children.length; i++) {
+  bindCompleteItems(completeUI.children[i], deleteTask);
+}
+
+form.addEventListener("submit", addTask);
